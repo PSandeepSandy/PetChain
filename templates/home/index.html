@@ -1,0 +1,49 @@
+{% load custom_templates %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<style type="text/css">
+
+	.item_card {
+		border: 1px solid grey;
+		background-color: #dfdfdf;
+		margin: 5px;
+	}
+
+	.item_card img {
+		height: 200px;
+		width: 100%;
+	}
+
+	.item_card_type {
+		color: grey;
+		font-size: 10px;
+	}
+
+	.item_card_name {
+		font-size: 20px;
+	}
+
+	.item_card_price {
+		font-size: 15px;
+	}
+
+</style>
+<body>
+    <h1> Welcome, {{ user.first_name }} </h1>
+    <a href="/seller/post-ad">Post Ad</a>
+    <a href="/logout/">Log Out</a>
+
+    {% for item in items %}
+    <div class="item_card">
+    	<img src="{{MEDIA_URL}}{{ item|get:'image' }}"> <br>
+    	<span class="item_card_type"> {{item|get:'type'}} </span> <br>
+    	<span class="item_card_name"> {{item|get:'name'}} </span> <br>
+    	<span class="item_card_price"> &#x20b9 {{item|get:'price'}} </span> <br>
+    </div>
+    {% endfor %}
+</body>
+</html>

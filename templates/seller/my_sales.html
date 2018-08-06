@@ -1,0 +1,54 @@
+{% load custom_templates %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title> My Sales </title>
+</head>
+<style type="text/css">
+	.items {
+		border: 1px solid black;
+	}
+
+	.item_details {
+		display: inline-block;
+	}
+
+	.item_name {
+		font-weight: bold;
+		font-size: 25px;
+	}
+
+	label {
+		color: grey;
+	}
+
+</style>
+<body>
+	{% for item in items %}
+	<div class="items">
+		<div class="item_details">
+			<img src="{{MEDIA_URL}}{{item|get:'image'}}" height="100px" width="100px">
+		</div>
+		<div class="item_details">
+			<span class="item_name">{{item|get:'item'}}</span> <br>
+			<span> Price </span>
+		</div>
+		<div class="transaction_detail">
+			<br>
+			<label> Approval Date : </label>
+			<span> {{item|get:'approval_date'}}</span><br>
+			<label> Delivery Date : </label>
+			<span> {{item|get:'delivery_date'}}</span><br>
+			{% if item|get:'status' == 'SHP' %}
+			<label> Shipped from : </label> <br>
+			{% elif item|get:'status' == 'DLV' %}
+			<br>
+			<label> Delivered from : </label> <br>
+			{% endif %}
+			<span> {{item|get:'seller_address_name'}}</span><br>
+			<span> {{item|get:'seller_address'}} </span>
+		</div>
+	</div>
+	{% endfor %}
+</body>
+</html>

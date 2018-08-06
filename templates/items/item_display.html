@@ -1,0 +1,43 @@
+{% load custom_templates %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title> {{item|get:'name'}}
+	 </title>
+</head>
+<style type="text/css">
+	.item_images {
+		display: inline-block;
+	}
+
+	.images {
+		border: 1px solid black;
+		height: 200px;
+	}
+
+</style>
+<body>
+	<span style="font-size: 10px"> {{item|get:'type'}} </span>
+	<h1> {{item|get:'name'}} </h1>
+	{% for image in images %}
+	<div>
+		<img src="{{MEDIA_URL}}{{image}}" class="images">
+	</div>
+	{% endfor %}
+	<br>
+	<div id="item_attr_wrap">
+		{% for attr in attrs %}
+			{% for key, val in attr.items %}
+			<label> {{ key }} : </label> <span> {{ val }} </span><br>
+			{% endfor %}
+		{% endfor %}
+	</div>
+	<br>
+	<div id="item_field_wrap">
+		{% for key, val in item.items %}
+			<label> {{ key }} : </label> <span> {{ val }} </span><br>
+		{% endfor %}
+	</div>
+	<label> Price: </label><span style="font-size: 25px;"> &#x20b9 {{item.price}} </span>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Manage Addresses</title>
+</head>
+<body>
+	<h2> Add Address </h2>
+	<form method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Add">
+	</form>
+</body>
+</html>

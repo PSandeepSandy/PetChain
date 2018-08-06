@@ -1,0 +1,33 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> Post Ad </title>
+    <link rel="stylesheet" type="text/css" href="{% static 'seller/post-ad/styling.css'%}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+    <script type="text/javascript" src="{% static 'seller/post-ad/post_ad.js'%}">
+    </script>
+</head>
+<body>
+	<h3> Item Type </h3>
+	{% for item in item_types %}
+	<button class="item_type_button"> {{ item }} </button>
+	{% endfor %}
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            <h3> Item Details </h3>
+            <div>
+                <label>Images: </label><br>
+                <input type="file" name="image">
+            </div>
+            <div id="item_attrib_wrap"></div>
+            {{ post_ad_form.as_p }}
+        </div>
+        <input type="submit" value="Post Ad">
+    </form>
+</body>
+</html>
