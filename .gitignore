@@ -1,1 +1,3 @@
 media/
+migrations/
+db.sqlite3
