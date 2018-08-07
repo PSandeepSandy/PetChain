@@ -1,4 +1,4 @@
-from django.conf import settings
+from urllib import parse as urlutil
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login
 
 from django.forms.models import model_to_dict
 
-from pet_market.forms import SignUpBuyerForm, PostAdForm, UserProfileEditForm, NewAddressForm
+from pet_market.forms import SignUpBuyerForm, PostAdForm, UserProfileEditForm, NewAddressForm, ApplyFilterForm
 from pet_market.models import *
 
 from pet_market.util import file_manager
@@ -38,13 +38,21 @@ def signup_buyer(request):
 # url: /
 def home(request):
 
-    offset = request.GET.get('offset', 0)
+    filter_data = {}
+
+    # The request.GET object is sent in a GET parameter
+    # Each value is the dictionary is a string with blank as 'None' or ''
+    # The following adds all not None keys into filter data
+    # the final filter data is applied to the all items to display the required results
+    for key, val in request.GET.dict().items():
+        if val != 'None' and val != '':
+            filter_data[key] = val
+
+    offset = filter_data.pop('offset', 0)
 
     # getting filtered list of items
-    filters = request.GET.get('filters', None)
-    if filters is not None:
-        filters = json.loads(filters)
-        items = Item.objects.filter(**filters).values('id', 'name', 'price', 'type__name')[offset:offset + 5]
+    if len(filter_data.keys()) > 0:
+        items = Item.objects.filter(**filter_data).values('id', 'name', 'price', 'type__name')[offset:offset + 5]
     else:
         items = Item.objects.filter().values('id', 'name', 'price', 'type__name')[offset:offset + 5]
 
@@ -53,8 +61,7 @@ def home(request):
         image = ItemImages.objects.get(item__id=item['id']).image_1
         item['image'] = image
         item.pop('id')
-        item['type'] = item['type__name']
-        item.pop('type__name')
+        item['type'] = item.pop('type__name')
 
     return render(request, 'home/index.html', {'items': items})
 
@@ -271,3 +278,16 @@ def mysales(request):
 
     return render(request, 'seller/my_sales.html', {'items': transactions})
 
+
+def apply_filters(request):
+
+    if request.method == 'GET':
+        if len(request.GET) > 0:
+            form = ApplyFilterForm(request.GET)
+
+            if form.is_valid():
+                return HttpResponseRedirect('/?%s' % urlutil.urlencode(form.cleaned_data))
+        else:
+            form = ApplyFilterForm()
+
+    return render(request, 'home/item_filter.html', {'form': form})
