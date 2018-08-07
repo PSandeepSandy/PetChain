@@ -50,11 +50,17 @@ def home(request):
 
     offset = filter_data.pop('offset', 0)
 
-    # getting filtered list of items
+    # getting available stock
+    stock = Stock.objects.filter(status='A').values('item')
+    stock_items_id = [item['item'] for item in stock]
+
+    items = Item.objects.filter(id__in=stock_items_id)
+
+    # applying filters (if given) to list
     if len(filter_data.keys()) > 0:
-        items = Item.objects.filter(**filter_data).values('id', 'name', 'price', 'type__name')[offset:offset + 5]
+        items = items.filter(**filter_data).values('id', 'name', 'price', 'type__name')[offset:offset + 5]
     else:
-        items = Item.objects.filter().values('id', 'name', 'price', 'type__name')[offset:offset + 5]
+        items = items.values('id', 'name', 'price', 'type__name')[offset:offset + 5]
 
     for item in items:
         # getting corresponding images
