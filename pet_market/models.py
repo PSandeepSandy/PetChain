@@ -247,6 +247,11 @@ class Transaction(models.Model):
     # Any more contracts needed
 
 
+# The Stock model stores the list of items in an inventory.
+# The items could be available or unavailable
+# The items could be unavailable if there are ongoing transcations but not yet completed
+# The item once sold is removed from the Stock
+# The Home Page all available items in Stock
 class Stock(models.Model):
 
     stock_status = [
