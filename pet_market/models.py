@@ -174,7 +174,6 @@ class Item(models.Model):
     type = models.ForeignKey(ItemType, on_delete=models.CASCADE)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     price = models.IntegerField(blank=False)
-    # offer fields to be added later
     # all item characteristics to be included below
     gender = models.CharField(choices=gender_choices, max_length=1, blank=True)    # cannot be applied for pet products
     age = models.IntegerField(blank=True)   # cannot be applied to fishes
@@ -246,3 +245,15 @@ class Transaction(models.Model):
     status = models.CharField(max_length=3, choices=choices, default='APR')
     invoice = models.FileField()
     # Any more contracts needed
+
+
+class Stock(models.Model):
+
+    stock_status = [
+        ('U', 'Unavailable'),
+        ('A', 'Available')
+    ]
+
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    status = models.CharField(max_length=1, choices=stock_status, blank=False, default='A')
+    # offer fields to be added later
