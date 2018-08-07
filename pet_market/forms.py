@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from pet_market.models import Buyer, NewUser, Item, Address
+from pet_market.models import Buyer, NewUser, Item, Address, Stock
 
 
 class UserCreationForm(forms.ModelForm):
@@ -76,6 +76,13 @@ class PostAdForm(forms.ModelForm):
                 'placeholder': field_name
             })
             field.label = ''
+
+    def save(self, commit=True):
+        item = super(PostAdForm, self).save(commit=True)
+
+        # Add it to stock and make it available
+        Stock.objects.create(item=item, status='A')
+        return item
 
 
 class UserProfileEditForm(UserChangeForm):
