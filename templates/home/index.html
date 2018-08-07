@@ -36,7 +36,7 @@
     <h1> Welcome, {{ user.first_name }} </h1>
     <a href="/seller/post-ad">Post Ad</a>
     <a href="/logout/">Log Out</a>
-
+	<a href="/filters/"> Filters </a>
     {% for item in items %}
     <div class="item_card">
     	<img src="{{MEDIA_URL}}{{ item|get:'image' }}"> <br>
