@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
-from pet_market.models import Seller, Buyer, Address, Transaction, \
-    Order, ItemType, AttributeType, ItemAttributes, Item, ItemAttributeValues, ItemImages, NewUser
+from pet_market.models import *
 from pet_market.forms import UserCreationForm, UserChangeForm
 
 
@@ -48,5 +47,7 @@ admin.site.register(AttributeType)
 admin.site.register(Item)
 admin.site.register(ItemAttributeValues)
 admin.site.register(ItemImages)
+
+admin.site.register(Stock)
 
 admin.site.unregister(Group)
