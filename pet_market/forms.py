@@ -96,3 +96,31 @@ class NewAddressForm(forms.ModelForm):
         widgets = {
             'address': forms.Textarea()
         }
+
+
+class ApplyFilterForm(forms.ModelForm):
+
+    # for entering price range
+    price__gte = forms.IntegerField(required=False)
+    price__lte = forms.IntegerField(required=False)
+
+    age__lte = forms.IntegerField(required=False)
+    age__gte = forms.IntegerField(required=False)
+
+    class Meta:
+        model = Item
+        fields = ('gender', 'age__gte', 'age__gte', 'price__gte', 'price__lte')
+
+    # to check whether proper price range is given
+    def clean(self):
+        cleaned_data = super(ApplyFilterForm, self).clean()
+        price_min = cleaned_data.get('price__gte')
+        price_max = cleaned_data.get('price__lte')
+
+        if price_min and price_max is not None:
+            if price_max <= price_min:
+                raise forms.ValidationError(
+                    'Enter a valid range.'
+                )
+
+        return cleaned_data
