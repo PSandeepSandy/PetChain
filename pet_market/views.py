@@ -66,7 +66,7 @@ def home(request):
         # getting corresponding images
         image = ItemImages.objects.get(item__id=item['id']).image_1
         item['image'] = image
-        item.pop('id')
+        # item.pop('id')
         item['type'] = item.pop('type__name')
 
     return render(request, 'home/index.html', {'items': items})
@@ -285,6 +285,9 @@ def mysales(request):
     return render(request, 'seller/my_sales.html', {'items': transactions})
 
 
+# A page for applying filters to the home page.
+# After taking filter values from the user, it redirects to the home page
+# url : /filters/
 def apply_filters(request):
 
     if request.method == 'GET':
@@ -297,3 +300,45 @@ def apply_filters(request):
             form = ApplyFilterForm()
 
     return render(request, 'home/item_filter.html', {'form': form})
+
+
+# The My Cart page - The list of items to be brought
+# url : /buyer/my-cart
+def my_cart(request):
+
+    buyer = Buyer.objects.get(user=request.user)
+
+    stock_items_id = buyer.carts.all().values_list('item', flat=True)
+    items = Item.objects.filter(id__in=stock_items_id)\
+        .values('id', 'name', 'type__name', 'seller__user__first_name', 'price')
+
+    total_price = 0
+    for item in items:
+        item['image'] = ItemImages.objects.get(item__id=item['id']).image_1
+        item['type'] = item.pop('type__name')
+        item['seller'] = item.pop('seller__user__first_name')
+        total_price += item['price']
+
+    context_dict = {
+        'cart': items,
+        'total': total_price,
+        'other_charges': 0,
+        'amount_payable': total_price,
+    }
+
+    return render(request, 'buyer/my_cart.html', context=context_dict)
+
+
+# The add-to-cart url
+# Whenever the user add items to his cart, to item id is send to this url and the item is
+# accordingly added to his cart.
+# url : /buyer/add-to-cart/
+def add_to_cart(request):
+
+    if request.method == 'POST':
+        print(request.POST)
+        buyer = Buyer.objects.get(user=request.user)
+        buyer.carts.add(Stock.objects.get(item__id=request.POST['item_id']))
+        buyer.save()
+
+        return HttpResponse('success')

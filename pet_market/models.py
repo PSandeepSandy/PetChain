@@ -80,18 +80,6 @@ class NewUser(AbstractBaseUser):
         return True
 
 
-class Buyer(models.Model):
-
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    gender_choices = [
-        ('M', 'Male'),
-        ('F', 'Female'),
-    ]
-    email = models.EmailField(blank=False)
-    gender = models.CharField(choices=gender_choices, max_length=1, blank=False)
-    coins = models.IntegerField(blank=False, default=0)
-
-
 class Seller(models.Model):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -214,6 +202,37 @@ class ItemImages(models.Model):
     def __str__(self):
         return self.image_1
 
+
+# The Stock model stores the list of items in an inventory.
+# The items could be available or unavailable
+# The items could be unavailable if there are ongoing transcations but not yet completed
+# The item once sold is removed from the Stock
+# The Home Page all available items in Stock
+class Stock(models.Model):
+
+    stock_status = [
+        ('U', 'Unavailable'),
+        ('A', 'Available')
+    ]
+
+    item = models.OneToOneField(Item, on_delete=models.CASCADE)
+    status = models.CharField(max_length=1, choices=stock_status, blank=False, default='A')
+    # offer fields to be added later
+
+
+class Buyer(models.Model):
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    gender_choices = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+    ]
+    email = models.EmailField(blank=False)
+    gender = models.CharField(choices=gender_choices, max_length=1, blank=False)
+    coins = models.IntegerField(blank=False, default=0)
+    carts = models.ManyToManyField(Stock, blank=True)
+
+
 '''    
 -> The Transaction and Items are designed assuming all items of a transaction have same status at the same 
     time
@@ -246,19 +265,3 @@ class Transaction(models.Model):
     invoice = models.FileField()
     # Any more contracts needed
 
-
-# The Stock model stores the list of items in an inventory.
-# The items could be available or unavailable
-# The items could be unavailable if there are ongoing transcations but not yet completed
-# The item once sold is removed from the Stock
-# The Home Page all available items in Stock
-class Stock(models.Model):
-
-    stock_status = [
-        ('U', 'Unavailable'),
-        ('A', 'Available')
-    ]
-
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    status = models.CharField(max_length=1, choices=stock_status, blank=False, default='A')
-    # offer fields to be added later

@@ -12,4 +12,6 @@ urlpatterns = [
     path('seller/post-ad/get-invalid-fields/', views.get_invalid_fields),
     path('seller/my-sales/', views.mysales),
     path('filters/', views.apply_filters),
+    path('buyer/my-cart/', views.my_cart),
+    path('buyer/add-to-cart', views.add_to_cart),
 ]
