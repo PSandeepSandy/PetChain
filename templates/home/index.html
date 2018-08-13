@@ -4,6 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    	$(document).ready(function() {
+    		$(".add_to_card_button").click(function(event) {
+	    		var item_id = $(this).parent().attr("id");
+	    		var id = item_id.substring(item_id.indexOf('_')+1);
+	    		$.ajax({
+	    			url: '/buyer/add-to-cart',
+	    			type: 'POST',
+	    			data: {item_id: id},
+	    			headers: {
+	    				'X-CSRFToken': '{{ csrf_token }}'
+	    			}
+	    		})
+	    		.done(function() {
+
+	    		})
+	    		.fail(function() {
+	    			alert("The item could not be added to cart!");
+	    		})
+	    		
+    		});
+    	});
+    </script>
 </head>
 <style type="text/css">
 
@@ -33,16 +57,19 @@
 
 </style>
 <body>
+	<a href="/buyer/my-cart/" style="float: right"> My Cart </a>
     <h1> Welcome, {{ user.first_name }} </h1>
     <a href="/seller/post-ad">Post Ad</a>
     <a href="/logout/">Log Out</a>
 	<a href="/filters/"> Filters </a>
+
     {% for item in items %}
-    <div class="item_card">
+    <div class="item_card" id="item_{{item|get:'id'}}">
     	<img src="{{MEDIA_URL}}{{ item|get:'image' }}"> <br>
     	<span class="item_card_type"> {{item|get:'type'}} </span> <br>
     	<span class="item_card_name"> {{item|get:'name'}} </span> <br>
     	<span class="item_card_price"> &#x20b9 {{item|get:'price'}} </span> <br>
+    	<button class="add_to_card_button">Add To Cart</button>
     </div>
     {% endfor %}
 </body>
