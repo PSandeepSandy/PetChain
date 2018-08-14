@@ -14,4 +14,5 @@ urlpatterns = [
     path('filters/', views.apply_filters),
     path('buyer/my-cart/', views.my_cart),
     path('buyer/add-to-cart', views.add_to_cart),
+    path('buyer/remove-from-cart', views.remove_from_cart),
 ]
