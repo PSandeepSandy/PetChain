@@ -38,6 +38,15 @@ def signup_buyer(request):
 # url: /
 def home(request):
 
+    # Trying to access whether user is a buyer or seller.
+    # If buyer, add a link to access its cart.
+    cart_count = -1
+    try:
+        buyer = Buyer.objects.get(user=request.user)
+        cart_count = buyer.carts.count()
+    except Buyer.DoesNotExist:
+        pass
+
     filter_data = {}
 
     # The request.GET object is sent in a GET parameter
@@ -69,7 +78,7 @@ def home(request):
         # item.pop('id')
         item['type'] = item.pop('type__name')
 
-    return render(request, 'home/index.html', {'items': items})
+    return render(request, 'home/index.html', {'items': items, 'cart_count': cart_count})
 
 
 # Part of the Post Ad page
@@ -339,6 +348,20 @@ def add_to_cart(request):
         print(request.POST)
         buyer = Buyer.objects.get(user=request.user)
         buyer.carts.add(Stock.objects.get(item__id=request.POST['item_id']))
+        buyer.save()
+
+        return HttpResponse('success')
+
+
+# The add-to-cart url
+# Whenever the user removes items from his cart, to item id is send to this url and the item is
+# accordingly removed from his cart.
+# url : /buyer/remove-from-cart/
+def remove_from_cart(request):
+
+    if request.method == 'POST':
+        buyer = Buyer.objects.get(user=request.user)
+        buyer.carts.remove(Stock.objects.get(item__id=request.POST['item_id']))
         buyer.save()
 
         return HttpResponse('success')

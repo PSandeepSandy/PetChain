@@ -18,8 +18,13 @@
 	    				'X-CSRFToken': '{{ csrf_token }}'
 	    			}
 	    		})
-	    		.done(function() {
-
+	    		.done(function(e) {
+	    			if (e == 'success') {
+	    				var myCartLink = $('#my_cart_link');
+	    				var text = myCartLink.text();
+	    				var cartCount = parseInt(text.charAt(text.indexOf('(')+1)) + 1;
+	    				$('#my_cart_link').text('My Cart ('+cartCount+')');
+	    			}
 	    		})
 	    		.fail(function() {
 	    			alert("The item could not be added to cart!");
@@ -57,7 +62,9 @@
 
 </style>
 <body>
-	<a href="/buyer/my-cart/" style="float: right"> My Cart </a>
+	{% if cart_count >= 0 %}
+	<a href="/buyer/my-cart/" style="float: right" id="my_cart_link"> My Cart ({{cart_count}})</a>
+	{% endif %}
     <h1> Welcome, {{ user.first_name }} </h1>
     <a href="/seller/post-ad">Post Ad</a>
     <a href="/logout/">Log Out</a>
@@ -69,7 +76,9 @@
     	<span class="item_card_type"> {{item|get:'type'}} </span> <br>
     	<span class="item_card_name"> {{item|get:'name'}} </span> <br>
     	<span class="item_card_price"> &#x20b9 {{item|get:'price'}} </span> <br>
+    	{% if cart_count >= 0 %}
     	<button class="add_to_card_button">Add To Cart</button>
+    	{% endif %}
     </div>
     {% endfor %}
 </body>
